@@ -1,60 +1,41 @@
 #include <iostream>
 using namespace std;
 
-string generateKey(string key, int n) {
-    string res = "";
-    for(int i = 0; i < n; i++) {
-        res += key[i % key.length()];
-    }
-    return res;
-}
-
-string encrypt(string text, string key) {
-    string genKey = generateKey(key, text.length());
-
-    string res = "";
-
-    for(int i = 0; i < text.length(); i++) {
-        int x = (genKey[i] - 'a');
-        if(text[i] == ' ') {
-            res += ' ';
-        } else if(isdigit(text[i])) {
-            res += text[i] + x;
-        } else if(isupper(text[i])) {
-            res += ((text[i] - 'A') + x) % 26 + 'A';
-        } else if(islower(text[i])) {
-            res += ((text[i] - 'a') + x) % 26 + 'a';
+string cipher(string PT, string key) {
+    string CT = "";
+    for(int i = 0; i < PT.length(); i++) {
+        int shift = key[i % key.length()] - 'a';
+        if(PT[i] == ' ') {
+            CT += " ";
+        }else if(isdigit(PT[i]))  {
+            CT += (PT[i] - '0' + shift) % 10 + '0';
+        } else if(islower(PT[i])) {
+            CT += (PT[i] - 'a' + shift) % 26 + 'a';
+        } else {
+            CT += (PT[i] - 'A' + shift) % 26 + 'A';
         }
     }
-    return res;
+    return CT;
 }
 
-string decrypt(string text, string key) {
-    string genKey = generateKey(key, text.length());
-
-    string res = "";
-
-    for(int i = 0; i < text.length(); i++) {
-        int x = (genKey[i] - 'a');
-        if(text[i] == ' ') {
-            res += ' ';
-        } else if(isdigit(text[i])) {
-            res += text[i] - x;
-        } else if(isupper(text[i])) {
-            res += ((text[i] - 'A') - x + 26) % 26 + 'A';
-        } else if(islower(text[i])) {
-            res += ((text[i] - 'a') - x + 26) % 26 + 'a';
+string decipher(string CT, string key) {
+    string PT = "";
+    for(int i = 0; i < CT.length(); i++) {
+        int shift = key[i % key.length()] - 'a';
+        if(CT[i] == ' ') {
+            PT += " ";
+        }else if(isdigit(CT[i]))  {
+            PT += (CT[i] - '0' - shift + 10) % 10 + '0';
+        } else if(islower(CT[i])) {
+            PT += (CT[i] - 'a' - shift + 26) % 26 + 'a';
+        } else {
+            PT += (CT[i] - 'A' - shift + 26) % 26 + 'A';
         }
     }
-    return res;
+    return PT;
 }
 
 int main() {
-    string text = "rendezvous";
-    string key = "ace";
-
-    cout << encrypt(text, key) << endl;
-    cout << decrypt(encrypt(text, key), key) << endl;
-
-    return 0;
+    cout << cipher("rendezvous", "ace") << endl;
+    cout << decipher(cipher("rendezvous", "ace"), "ace") << endl;
 }

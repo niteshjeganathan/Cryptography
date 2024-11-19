@@ -2,44 +2,39 @@
 #include <string>
 using namespace std;
 
-string encrypt(string text, int x) {
-    string res = "";
-    for(int i = 0; i < text.length(); i++) {
-        if(text[i] == ' ') {
-            res += ' ';
-        } else if(isdigit(text[i])) {
-            res += text[i] + x;
-        } else if(isupper(text[i])) {
-            res += ((text[i] - 'A') + x) % 26 + 'A';
-        } else if(islower(text[i])) {
-            res += ((text[i] - 'a') + x) % 26 + 'a';
+string cipher(string PT, int shift) {
+    string CT = "";
+    for(int i = 0; i < PT.length(); i++) {
+        if(PT[i] == ' ') {
+            CT += " ";
+        }else if(isdigit(PT[i]))  {
+            CT += (PT[i] - '0' + shift) % 10 + '0';
+        } else if(islower(PT[i])) {
+            CT += (PT[i] - 'a' + shift) % 26 + 'a';
+        } else {
+            CT += (PT[i] - 'A' + shift) % 26 + 'A';
         }
     }
-    return res;
+    return CT;
 }
 
-string decrypt(string text, int x) {
-    string res = "";
-    for(int i = 0; i < text.length(); i++) {
-        if(text[i] == ' ') {
-            res += ' ';
-        } else if(isdigit(text[i])) {
-            res += text[i] - x;
-        } else if(isupper(text[i])) {
-            res += ((text[i] - 'A') - x + 26) % 26 + 'A';
-        } else if(islower(text[i])) {
-            res += ((text[i] - 'a') - x + 26) % 26 + 'a';
+string decipher(string CT, int shift) {
+    string PT = "";
+    for(int i = 0; i < CT.length(); i++) {
+        if(CT[i] == ' ') {
+            PT += " ";
+        }else if(isdigit(CT[i]))  {
+            PT += (CT[i] - '0' - shift + 10) % 10 + '0';
+        } else if(islower(CT[i])) {
+            PT += (CT[i] - 'a' - shift + 26) % 26 + 'a';
+        } else {
+            PT += (CT[i] - 'A' - shift + 26) % 26 + 'A';
         }
     }
-    return res;
+    return PT;
 }
 
 int main() {
-    string text = "I stand 5th in our class";
-    int num = 3;
-
-    cout << encrypt(text, num) << endl;
-    cout << decrypt(encrypt(text, num), num) << endl;
-    
-    return 0;
-} 
+    cout << cipher("I stand 5th in our class", 3) << endl;
+    cout << decipher(cipher("I stand 5th in our class", 3), 3) << endl;
+}

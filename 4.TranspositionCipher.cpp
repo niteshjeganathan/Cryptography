@@ -1,63 +1,70 @@
 #include <iostream>
+#include <algorithm>
+#include <vector>
 using namespace std;
 
-string encrypt(string text, string key) {
+string cipher(string PT, string key) {
     int cols = key.length();
-    int rows = (text.length() + cols - 1) / cols;
+    int rows = (PT.length() + cols - 1) / cols;
 
-    while(text.length() < rows * cols) {
-        text += ' ';
+    while(PT.length() < rows * cols) {
+        PT += " ";
     }
 
-    vector<vector<char>> grid(rows, vector<char>(cols));
+    string CT = "";
 
-    for(int i = 0; i < text.length(); i++) {
-        grid[i/cols][i%cols] = text[i];
+    vector<vector<char> > grid(cols, vector<char>(rows));
+
+    for(int i = 0; i < PT.length(); i++) {
+        grid[i/cols][i%cols] = PT[i];
     }
-
+    
     string sortedKey = key;
     sort(sortedKey.begin(), sortedKey.end());
 
-    string res = "";
-    for(int i = 0; i < sortedKey.length(); i++) {
+    for(int i = 0; i < cols; i++) {
         int col = key.find(sortedKey[i]);
+
         for(int row = 0; row < rows; row++) {
-            res += grid[row][col];
+            CT += grid[row][col];
         }
     }
 
-    return res;
+    return CT;
 }
 
-string decrypt(string text, string key) {
+string decipher(string CT, string key) {
     int cols = key.length();
-    int rows = (text.length() + cols - 1) / cols;
+    int rows = CT.length() / cols;
 
-    vector<string> grid(rows, string(cols, ' '));
+    vector<vector<char> > grid(cols, vector<char>(rows));
 
     string sortedKey = key;
     sort(sortedKey.begin(), sortedKey.end());
 
-    int currentIndex = 0;
-
-    for(int i = 0; i < sortedKey.length(); i++) {
+    int currIndex = 0;
+    for(int i = 0; i < CT.length(); i++) {
         int col = key.find(sortedKey[i]);
         for(int row = 0; row < rows; row++) {
-            grid[row][col] = text[currentIndex++];
+            grid[row][col] = CT[currIndex++];
         }
     }
 
-    string res = "";
+    string PT = "";
+
     for(int i = 0; i < rows; i++) {
-        res += grid[i];
+        for(int j = 0; j < cols; j++) {
+            PT += grid[i][j];
+        }
     }
 
-    res = res.substr(0, res.find_last_not_of(' ') + 1);
-
-    return res;
+    return  PT;
 }
+
+
 
 int main() {
-    cout << encrypt("Apple is fresh", "heal") << endl;
-    cout << decrypt(encrypt("Apple is fresh", "heal"), "heal") << endl;
+    cout << cipher("Apple is fresh", "heal") << endl;
+
+    cout << decipher(cipher("Apple is fresh", "heal"), "heal") << endl;
 }

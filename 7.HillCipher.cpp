@@ -2,48 +2,56 @@
 #include <vector>
 using namespace std;
 
-string encrypt(string text, vector<vector<int>> key) {
-    vector<int> txt;
-    for(char chr : text) {
-        txt.push_back(chr - 'A');
+string cipher(string PT, vector<vector<int>> key) {
+    vector<int> text;
+
+    for(int i = 0; i <  PT.length(); i++) {
+        text.push_back(PT[i] - 'A');
     }
 
-    vector<int> res(text.length(), 0);
-    for(int i = 0; i < key.size(); i++) {
-        for(int j = 0; j < key[i].size(); j++) {
-            res[i] += key[i][j] * txt[j];
+    vector<int> res;
+
+    for(int i = 0; i < PT.length(); i++) {
+        int sum = 0;
+        for(int j = 0; j < PT.length(); j++) {  
+            sum += text[j] * key[i][j];
         }
-        res[i] = res[i] % 26;
+        sum = sum % 26;
+        res.push_back(sum);
     }
 
     string cipher = "";
-    for(int num : res) {
-        cipher += num + 'A';
+    for(int i = 0; i < res.size(); i++) {
+        cipher += res[i] + 'A';
     }
-    
+
     return cipher;
 }
 
-string decrypt(string text, vector<vector<int>> key) {
-    vector<int> txt;
-    for(char chr : text) {
-        txt.push_back(chr - 'A');
+string decipher(string CT, vector<vector<int>> key) {
+    vector<int> cipher;
+
+    for(int i = 0; i <  CT.length(); i++) {
+        cipher.push_back(CT[i] - 'A');
     }
 
-    vector<int> res(text.length(), 0);
-    for(int i = 0; i < key.size(); i++) {
-        for(int j = 0; j < key[i].size(); j++) {
-            res[i] += key[i][j] * txt[j];
+    vector<int> text;
+
+    for(int i = 0; i < CT.length(); i++) {
+        int sum = 0;
+        for(int j = 0; j < CT.length(); j++) {  
+            sum += cipher[j] * key[i][j];
         }
-        res[i] = res[i] % 26;
+        sum = sum % 26;
+        text.push_back(sum);
     }
 
-    string cipher = "";
-    for(int num : res) {
-        cipher += num + 'A';
+    string pt = "";
+    for(int i = 0; i < text.size(); i++) {
+        pt += text[i] + 'A';
     }
-    
-    return cipher;
+
+    return pt;
 }
 
 int main() {
@@ -60,6 +68,6 @@ int main() {
         {21, 12, 8}
     };
 
-    cout << encrypt(text, key) << endl;
-    cout << decrypt(encrypt(text, key), inverseKey) << endl;
+    cout << cipher(text, key) << endl;
+    cout << decipher(cipher(text, key), inverseKey) << endl;
 }

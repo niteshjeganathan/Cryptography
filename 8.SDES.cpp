@@ -2,7 +2,7 @@
 #include <vector>
 using namespace std;
 
-string initialPermutate(string text) {
+string initialPermute(string text) {
     vector<int> IP {2, 6, 3, 1, 4, 8, 5, 7};
     string ip = "";
     for(int i = 0; i < IP.size(); i++) {
@@ -11,7 +11,7 @@ string initialPermutate(string text) {
     return ip;
 }
 
-string inversePermutate(string text) {
+string inversePermute(string text) {
     vector<int> IIP {4, 1, 3, 5, 7, 2, 8, 6};
     string iip = "";
     for(int i = 0; i < IIP.size(); i++) {
@@ -20,7 +20,7 @@ string inversePermutate(string text) {
     return iip;
 }
 
-string expandPermutate(string text) {
+string expandPermute(string text) {
     vector<int> EP {4, 1, 2, 3, 2, 3, 4, 1};
     string ep = "";
     for(int i = 0; i < EP.size(); i++) {
@@ -32,7 +32,7 @@ string expandPermutate(string text) {
 string xorOperation(string s1, string s2) {
     string res = "";
     for(int i = 0; i < s1.length(); i++) {
-        res += (s1[i] == s2[i]) ? '0' : '1';
+        res += (s1[i] == s2[i])? '0' : '1';
     }
     return res;
 }
@@ -81,38 +81,38 @@ string p4permutate(string text) {
 
 string swapFunction(string text) {
     string left = text.substr(0, 4);
-    string right = text.substr(4, 8);
+    string right = text.substr(4, 4);
     return right + left;
 }
 
 string roundFunction(string text, string key) {
-    string expanded_right_half = expandPermutate(text);
-    string xored = xorOperation(expanded_right_half, key);
+    string expanded_right = expandPermute(text);
+    string xored = xorOperation(expanded_right, key);
     string substituted = sbox(xored);
     string p4 = p4permutate(substituted);
     return p4;
 }
 
-string SDES(string text, string k1, string k2) {
-    string ip = initialPermutate(text);
+string SDES(string text, string key1, string key2) {
+    string ip = initialPermute(text);
 
     string left = ip.substr(0, 4);
-    string right = ip.substr(4, 8);
+    string right = ip.substr(4, 4);
 
-    string f_k1 = roundFunction(right, k1);
-    string left_xor_f_k1 = xorOperation(left, f_k1);
+    string f_k1 = roundFunction(right, key1);
+    string left_xor_f_k1 = xorOperation(f_k1, left);
 
     string combined = left_xor_f_k1 + right;
     string swapped = swapFunction(combined);
 
     string left2 = swapped.substr(0, 4);
-    string right2 = swapped.substr(4, 8);
+    string right2 = swapped.substr(4, 4);
 
-    string f_k2 = roundFunction(right2, k2);
+    string f_k2 = roundFunction(right2, key2);
     string left_xor_f_k2 = xorOperation(f_k2, left2);
 
     string combined2 = left_xor_f_k2 + right2;
-    string cipher = inversePermutate(combined2);
+    string cipher = inversePermute(combined2);
 
     return cipher;
 }
